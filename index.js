@@ -5,6 +5,43 @@ const POS_BEFORE = 'before';
 const ERR_INVALID_SPECIFIER = 'ERR_INVALID_SPECIFIER';
 const PLACEHOLDER_EL = {};
 
+
+/**
+ * Re-arrange elements in a list according to positions they would like to
+ * be placed at.
+ *
+ * Supported specifiers:
+ *
+ * - { at:     Number  } // static position
+ * - { before: String  } // anchored position; put it before "id"
+ * - { after:  String  } // anchored position; put it after  "id"
+ *
+ * @param {Object} params
+ * @param {String} params.orderKey
+ *        The attribute that contains the placement specifier.
+ *
+ * @param {String} params.idKey
+ *        The attribute that (uniquely) identifies an element in the list.
+ *
+ * @param {Array.<Object>} elements
+ *        The list to be re-arranged.
+ *
+ * @return {Array.<Object>}
+ *
+ * ---
+ *
+ * The algorithm in words:
+ *
+ * 1. reserve indices for elements with static specifiers (e.g. `at: X`)
+ * 2. if more than one element reserve the same index, re-arrange them according
+ *    to their natural (occurrence) order
+ * 3. resolve anchored indices (e.g. `before: X`)
+ * 4. shift the list until no elements with negative indices remain (e.g.
+ *    `before: A` where A is `at: 0`)
+ * 5. compact the list by removing empty elements at edges (which would happen
+ *    if, say, A is at 2 and B is before it, we'd end up with `null, null, B,
+ *    A`)
+ */
 exports.rearrangeList = function rearrangeList() {
   return exports.rearrangeListWithErrors.apply(null, arguments).list;
 };
